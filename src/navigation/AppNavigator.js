@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useState } from 'react';
 
-import AuthNavigator from './AuthNavigator';
 import HomeScreen from '../screens/HomeScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import AuthNavigator from './AuthNavigator';
 
 const Stack = createNativeStackNavigator();
 

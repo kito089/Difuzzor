@@ -1,9 +1,10 @@
 import { Button, Text, View } from 'react-native';
 
-export default function HomeScreen({ navigation }) {
+
+export default function MarketScreen({ navigation }) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Home Screen</Text>
+      <Text>Market Screen</Text>
       <Button
         title="Go to Profile"
         onPress={() => navigation.navigate('Profile')}
