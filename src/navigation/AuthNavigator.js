@@ -13,7 +13,14 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 // Componente del Header personalizado
-function CustomHeader() {
+function CustomHeader({ navigation }) {
+  const handleLogout = () => {
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Login' }],
+    });
+  };
+
   return (
     <View style={styles.header}>
       <View style={styles.headerContent}>
@@ -25,8 +32,11 @@ function CustomHeader() {
         <Text style={styles.headerTitle}>Difuzzor</Text>
       </View>
       
-      <TouchableOpacity style={styles.headerRight}>
-        <View style={styles.headerIconPlaceholder} />
+      <TouchableOpacity 
+        style={styles.logoutButton}
+        onPress={handleLogout}
+      >
+        <Text style={styles.logoutText}>Salir</Text>
       </TouchableOpacity>
     </View>
   );
@@ -36,13 +46,13 @@ function CustomHeader() {
 function MainTabs() {
   return (
     <Tab.Navigator
-      screenOptions={{
-        header: () => <CustomHeader />,
+      screenOptions={({ navigation }) => ({
+        header: () => <CustomHeader navigation={navigation} />,
         tabBarStyle: styles.tabBar,
         tabBarShowLabel: false,
         tabBarActiveTintColor: '#0E86DB',
         tabBarInactiveTintColor: '#FFFFFF',
-      }}
+      })}
     >
       <Tab.Screen
         name="Market"
@@ -137,9 +147,16 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     marginLeft: 16,
   },
-  headerIconPlaceholder: {
-    width: 30,
-    height: 30,
+  logoutButton: {
+    backgroundColor: '#D32F2F',
+    borderRadius: 6,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+  },
+  logoutText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
   },
   
   // Tab bar styles
