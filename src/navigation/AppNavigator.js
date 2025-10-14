@@ -1,26 +1,20 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useState } from 'react';
-
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from '../screens/HomeScreen';
+import MarketScreen from '../screens/MarketScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import AuthNavigator from './AuthNavigator';
+
+import PruebaScreen from '../screens/PruebaScreen';
 
 const Stack = createNativeStackNavigator();
 
-export default function AppNavigator() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // ejemplo simple
-
+export default function AppNavigator(){
   return (
-    <NavigationContainer>
-      {isLoggedIn ? (
-        <Stack.Navigator>
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Profile" component={ProfileScreen} />
-        </Stack.Navigator>
-      ) : (
-        <AuthNavigator />
-      )}
-    </NavigationContainer>
-  );
+    console.log("AppNavigator renderizado"),
+    <Stack.Navigator initialRouteName="Prueba" screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Market" component={MarketScreen} />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="Prueba" component={PruebaScreen} />
+    </Stack.Navigator>
+  )
 }
