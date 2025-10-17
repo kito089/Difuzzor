@@ -1,11 +1,9 @@
-import React from 'react';
-import { Image, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { useSession } from "../utils/SessionContext";
+import { Image, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { authService } from "../services/authService";
+import { useSession } from "../utils/SessionContext";
 
 import gato from '../../assets/gato.png';
-import styles from '../styles/HomeScreenStyles';
 
 export default function MainLayout({ children }) {
     const navigation = useNavigation();
@@ -53,7 +51,7 @@ export default function MainLayout({ children }) {
                     onPress={() => navigation.navigate('Market')}
                     >
                     <Image
-                        source={require('../../assets/Tienda.png')}
+                        source={require('../../assets/icons/Tienda.png')}
                         style={stylesLayout.icon}
                     />
                 </TouchableOpacity>
@@ -63,7 +61,7 @@ export default function MainLayout({ children }) {
                     onPress={() => navigation.navigate('Home')}
                     >
                     <Image
-                        source={require('../../assets/Home.png')}
+                        source={require('../../assets/icons/Home.png')}
                         style={stylesLayout.icon}
                     />
                 </TouchableOpacity>
@@ -73,7 +71,7 @@ export default function MainLayout({ children }) {
                     onPress={() => navigation.navigate('Profile')}
                     >
                     <Image
-                        source={require('../../assets/defaultavatar.png')}
+                        source={require('../../assets/icons/defaultavatar.png')}
                         style={stylesLayout.icon}
                     />
                 </TouchableOpacity>

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import postcard from "../styles/PostCard";
 import styles from "../styles/ProfileScreenStyles";
 
 // Datos de ejemplo para las publicaciones del usuario
@@ -35,51 +36,51 @@ const ProfileScreen = () => {
   const tabs = ['Publicaciones', 'Comentarios', 'Quejas'];
 
   const renderPost = ({ item }) => (
-    <View style={styles.postCard}>
-      <Text style={styles.postContent}>{item.content}</Text>
-      <Text style={styles.postTime}>{item.time}</Text>
+    <View style={postcard.postCard}>
+      <Text style={postcard.postContent}>{item.content}</Text>
+      <Text style={postcard.postTime}>{item.time}</Text>
 
       {item.image && (
-        <Image source={item.image} style={styles.postImage} />
+        <Image source={item.image} style={postcard.postImage} />
       )}
 
-      <View style={styles.actionsContainer}>
-        <TouchableOpacity style={styles.actionButton}>
+      <View style={postcard.actionsContainer}>
+        <TouchableOpacity style={postcard.actionButton}>
           <Image
             source={require('../../assets/reaction.png')}
-            style={styles.actionIcon}
+            style={postcard.actionIcon}
           />
-          <Text style={styles.actionText}>Reaccionar</Text>
+          <Text style={postcard.actionText}>Reaccionar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity style={postcard.actionButton}>
           <Image
             source={require('../../assets/comment.png')}
-            style={styles.actionIcon}
+            style={postcard.actionIcon}
           />
-          <Text style={styles.actionText}>Comentar</Text>
+          <Text style={postcard.actionText}>Comentar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity style={postcard.actionButton}>
           <Image
             source={require('../../assets/share.png')}
-            style={styles.actionIcon}
+            style={postcard.actionIcon}
           />
-          <Text style={styles.actionText}>Compartir</Text>
+          <Text style={postcard.actionText}>Compartir</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity style={postcard.actionButton}>
           <Image
             source={require('../../assets/report.png')}
-            style={styles.actionIcon}
+            style={postcard.actionIcon}
           />
-          <Text style={styles.actionText}>Descartar</Text>
+          <Text style={postcard.actionText}>Descartar</Text>
         </TouchableOpacity>
       </View>
 
-      <View style={styles.statsContainer}>
-        <Text style={styles.statsText}>{item.reactions} reacciones</Text>
-        <Text style={styles.statsText}>{item.comments} comentarios</Text>
+      <View style={postcard.statsContainer}>
+        <Text style={postcard.statsText}>{item.reactions} reacciones</Text>
+        <Text style={postcard.statsText}>{item.comments} comentarios</Text>
       </View>
     </View>
   );
@@ -93,7 +94,7 @@ const ProfileScreen = () => {
       <View style={styles.profileSection}>
         <View style={styles.avatarContainer}>
           <Image
-            source={require('../../assets/defaultavatar.png')}
+            source={require('../../assets/icons/defaultavatar.png')}
             style={styles.avatar}
           />
         </View>

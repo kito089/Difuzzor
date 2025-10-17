@@ -9,6 +9,7 @@ import {
   View,
 } from "react-native";
 import styles from "../styles/HomeScreenStyles";
+import postcard from "../styles/PostCard";
 
 // Datos de ejemplo para las publicaciones
 const POSTS_DATA = [
@@ -16,7 +17,7 @@ const POSTS_DATA = [
     id: '1',
     user: {
       name: 'Conferencia de viajes',
-      avatar: require('../../assets/defaultavatar.png'),
+      avatar: require('../../assets/icons/defaultavatar.png'),
       time: 'Hace 3 horas',
     },
     category: 'UTA',
@@ -29,7 +30,7 @@ const POSTS_DATA = [
     id: '2',
     user: {
       name: 'Julión Álvarez',
-      avatar: require('../../assets/defaultavatar.png'),
+      avatar: require('../../assets/icons/defaultavatar.png'),
       time: 'Hace 24 horas',
     },
     category: null,
@@ -42,7 +43,7 @@ const POSTS_DATA = [
     id: '3',
     user: {
       name: 'Deportes UTA',
-      avatar: require('../../assets/defaultavatar.png'),
+      avatar: require('../../assets/icons/defaultavatar.png'),
       time: 'Hace 1 día',
     },
     category: 'Deportes',
@@ -60,70 +61,70 @@ const HomeScreen = () => {
   const filters = ['Todos', 'UTA', 'Culturales', 'Deportivos'];
 
   const renderPost = ({ item }) => (
-    <View style={styles.postCard}>
+    <View style={postcard.postCard}>
       {/* Header del post */}
-      <View style={styles.postHeader}>
-        <Image source={item.user.avatar} style={styles.avatar} />
-        <View style={styles.userInfo}>
-          <Text style={styles.userName}>{item.user.name}</Text>
-          <Text style={styles.postTime}>{item.user.time}</Text>
+      <View style={postcard.postHeader}>
+        <Image source={item.user.avatar} style={postcard.avatar} />
+        <View style={postcard.userInfo}>
+          <Text style={postcard.userName}>{item.user.name}</Text>
+          <Text style={postcard.postTime}>{item.user.time}</Text>
         </View>
         {item.category && (
-          <View style={styles.categoryBadge}>
-            <Text style={styles.categoryText}>{item.category}</Text>
+          <View style={postcard.categoryBadge}>
+            <Text style={postcard.categoryText}>{item.category}</Text>
           </View>
         )}
       </View>
 
       {/* Contenido del post */}
-      <Text style={styles.postContent}>{item.content}</Text>
+  <Text style={postcard.postContent}>{item.content}</Text>
 
       {/* Imagen del post (si existe) */}
       {item.image && (
-        <Image source={item.image} style={styles.postImage} />
+        <Image source={item.image} style={postcard.postImage} />
       )}
 
       {/* Stats */}
-      <View style={styles.statsContainer}>
-        <Text style={styles.statsText}>{item.reactions} reacciones</Text>
-        <Text style={styles.statsText}>{item.comments} comentarios</Text>
+      <View style={postcard.statsContainer}>
+        <Text style={postcard.statsText}>{item.reactions} reacciones</Text>
+        <Text style={postcard.statsText}>{item.comments} comentarios</Text>
       </View>
 
       {/* Separador */}
-      <View style={styles.divider} />
+  <View style={postcard.divider} />
 
       {/* Botones de acción */}
-      <View style={styles.actionsContainer}>
-        <TouchableOpacity style={styles.actionButton}>
+      <View style={postcard.actionsContainer}>
+        <TouchableOpacity style={postcard.actionButton}>
           <Image
             source={require('../../assets/reaction.png')}
-            style={styles.actionIcon}
+            style={postcard.actionIcon}
           />
-          <Text style={styles.actionText}>Reaccionar</Text>
+          <Text style={postcard.actionText}>Reaccionar</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.actionButton}>
           <Image
             source={require('../../assets/comment.png')}
-            style={styles.actionIcon}
+            style={postcard.actionIcon}
           />
-          <Text style={styles.actionText}>Comentar</Text>
+          <Text style={postcard.actionText}>Comentar</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.actionButton}>
           <Image
             source={require('../../assets/share.png')}
-            style={styles.actionIcon}
+            style={postcard.actionIcon}
           />
-          <Text style={styles.actionText}>Compartir</Text>
+          <Text style={postcard.actionText}>Compartir</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.actionButton}>
           <Image
             source={require('../../assets/report.png')}
-            style={styles.actionIcon}
+            style={postcard.actionIcon}
           />
-          <Text style={styles.actionText}>Reportar</Text>
+          <Text style={postcard.actionText}>Reportar</Text>
         </TouchableOpacity>
       </View>
     </View>
