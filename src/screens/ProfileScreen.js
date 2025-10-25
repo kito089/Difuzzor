@@ -7,8 +7,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import postcard from "../styles/PostCard";
 import styles from "../styles/ProfileScreenStyles";
+import ProfileCustomScreen from "./ProfileCustomScreen";
 
 // Datos de ejemplo para las publicaciones del usuario
 const USER_POSTS = [
@@ -32,55 +32,83 @@ const USER_POSTS = [
 
 const ProfileScreen = () => {
   const [activeTab, setActiveTab] = useState('Publicaciones');
+  const [isEditing, setIsEditing] = useState(false);
+  const [nombre, setNombre] = useState("Magdalena");
+  const [apellido, setApellido] = useState("Morquecho Reyes");
+  const [descripcion, setDescripcion] = useState("Hola amigos, hablen más soy buena onda siempre estoy activaaa");
 
   const tabs = ['Publicaciones', 'Comentarios', 'Quejas'];
 
+  const handleSaveProfile = (data) => {
+    setNombre(data.nombre);
+    setApellido(data.apellido);
+    setDescripcion(data.descripcion);
+    setIsEditing(false);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+  };
+
+  // Si está en modo edición, mostrar ProfileCustomScreen
+  if (isEditing) {
+    return (
+      <ProfileCustomScreen
+        nombre={nombre}
+        apellido={apellido}
+        descripcion={descripcion}
+        onSave={handleSaveProfile}
+        onCancel={handleCancelEdit}
+      />
+    );
+  }
+
   const renderPost = ({ item }) => (
-    <View style={postcard.postCard}>
-      <Text style={postcard.postContent}>{item.content}</Text>
-      <Text style={postcard.postTime}>{item.time}</Text>
+    <View style={styles.postCard}>
+      <Text style={styles.postContent}>{item.content}</Text>
+      <Text style={styles.postTime}>{item.time}</Text>
 
       {item.image && (
-        <Image source={item.image} style={postcard.postImage} />
+        <Image source={item.image} style={styles.postImage} />
       )}
 
-      <View style={postcard.actionsContainer}>
-        <TouchableOpacity style={postcard.actionButton}>
+      <View style={styles.actionsContainer}>
+        <TouchableOpacity style={styles.actionButton}>
           <Image
             source={require('../../assets/reaction.png')}
-            style={postcard.actionIcon}
+            style={styles.actionIcon}
           />
-          <Text style={postcard.actionText}>Reaccionar</Text>
+          <Text style={styles.actionText}>Reaccionar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={postcard.actionButton}>
+        <TouchableOpacity style={styles.actionButton}>
           <Image
             source={require('../../assets/comment.png')}
-            style={postcard.actionIcon}
+            style={styles.actionIcon}
           />
-          <Text style={postcard.actionText}>Comentar</Text>
+          <Text style={styles.actionText}>Comentar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={postcard.actionButton}>
+        <TouchableOpacity style={styles.actionButton}>
           <Image
             source={require('../../assets/share.png')}
-            style={postcard.actionIcon}
+            style={styles.actionIcon}
           />
-          <Text style={postcard.actionText}>Compartir</Text>
+          <Text style={styles.actionText}>Compartir</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={postcard.actionButton}>
+        <TouchableOpacity style={styles.actionButton}>
           <Image
             source={require('../../assets/report.png')}
-            style={postcard.actionIcon}
+            style={styles.actionIcon}
           />
-          <Text style={postcard.actionText}>Descartar</Text>
+          <Text style={styles.actionText}>Descartar</Text>
         </TouchableOpacity>
       </View>
 
-      <View style={postcard.statsContainer}>
-        <Text style={postcard.statsText}>{item.reactions} reacciones</Text>
-        <Text style={postcard.statsText}>{item.comments} comentarios</Text>
+      <View style={styles.statsContainer}>
+        <Text style={styles.statsText}>{item.reactions} reacciones</Text>
+        <Text style={styles.statsText}>{item.comments} comentarios</Text>
       </View>
     </View>
   );
@@ -99,13 +127,16 @@ const ProfileScreen = () => {
           />
         </View>
 
-        <Text style={styles.userName}>Magdalena Morquecho Reyes</Text>
+        <Text style={styles.userName}>{nombre} {apellido}</Text>
         <Text style={styles.userMatricula}>Matrícula: 246534</Text>
         <Text style={styles.userBio}>
-          Hola amigos, hablen más soy buena onda siempre estoy facherita
+          {descripcion}
         </Text>
 
-        <TouchableOpacity style={styles.editButton}>
+        <TouchableOpacity 
+          style={styles.editButton}
+          onPress={() => setIsEditing(true)}
+        >
           <Text style={styles.editButtonText}>Editar Perfil ✏️</Text>
         </TouchableOpacity>
 
@@ -129,6 +160,9 @@ const ProfileScreen = () => {
                 activeTab === tab && styles.tabTextActive,
               ]}
             >
+              {tab === 'Publicaciones' && '📝 '}
+              {tab === 'Comentarios' && '💬 '}
+              {tab === 'Quejas' && '⚠️ '}
               {tab}
             </Text>
           </TouchableOpacity>
