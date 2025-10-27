@@ -35,13 +35,18 @@ const CrudTableScreen = ({ route }) => {
       setLoading(true);
       
       const atributosResponse = await apiService.apiCrud('/atributos', tabla);
+      console.log("Atributos response:", atributosResponse);
       if (atributosResponse.success) {
-        setAtributos(atributosResponse.data);
+        console.log("Estableciendo atributos:", atributosResponse.atributos);
+        
+        setAtributos(atributosResponse.atributos);
         
         const datosResponse = await apiService.apiCrud('/obtener', tabla);
+        console.log("Datos response:", datosResponse);
         if (datosResponse.success) {
-          setDatos(datosResponse.data);
-          setDatosFiltrados(datosResponse.data);
+          console.log("Estableciendo datos:", datosResponse.datos);
+          setDatos(datosResponse.datos);
+          setDatosFiltrados(datosResponse.datos);
         } else {
           throw new Error(datosResponse.message);
         }
@@ -146,11 +151,15 @@ const CrudTableScreen = ({ route }) => {
     try {
       let response;
       
+      const datosSinId = Object.fromEntries(
+        Object.entries(formData).filter(([key]) => key !== atributos[0])
+      );
+
       if (editingItem) {
         const id = editingItem[atributos[0]];
-        response = await apiService.apiCrud('/actualizar', tabla, id, formData);
+        response = await apiService.apiCrud('/actualizar', tabla, id, datosSinId);
       } else {
-        response = await apiService.apiCrud('/insertar', tabla, null, formData);
+        response = await apiService.apiCrud('/insertar', tabla, null, datosSinId);
       }
 
       if (response.success) {
