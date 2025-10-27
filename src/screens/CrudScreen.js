@@ -1,11 +1,13 @@
-// screens/CrudTableScreen.js
+// screens/CrudCardScreen.js
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
   FlatList,
+  Image,
   Modal,
   RefreshControl,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -15,31 +17,31 @@ import {
 } from 'react-native';
 import { apiService } from '../services/apiService';
 
-
-const CrudTableScreen = ({ route }) => {
-  const { tabla } = route.params || { tabla: 'Clubes' }; // Tabla por defecto
+const CrudCardScreen = ({ route }) => {
+  const { tabla } = route.params || { tabla: 'Clubs' };
   const [atributos, setAtributos] = useState([]);
   const [datos, setDatos] = useState([]);
+  const [datosFiltrados, setDatosFiltrados] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [formData, setFormData] = useState({});
+  const [searchText, setSearchText] = useState('');
 
-  // Cargar atributos y datos
+  // Cargar datos de la API
   const cargarDatos = async () => {
     try {
       setLoading(true);
       
-      // Obtener atributos de la tabla
-      const atributosResponse = await apiService.apiCrud('/atributos',tabla);
+      const atributosResponse = await apiService.apiCrud('/atributos', tabla);
       if (atributosResponse.success) {
         setAtributos(atributosResponse.data);
         
-        // Obtener datos de la tabla
-        const datosResponse = await apiService.apiCrud('/obtener',tabla);
+        const datosResponse = await apiService.apiCrud('/obtener', tabla);
         if (datosResponse.success) {
           setDatos(datosResponse.data);
+          setDatosFiltrados(datosResponse.data);
         } else {
           throw new Error(datosResponse.message);
         }
@@ -59,6 +61,21 @@ const CrudTableScreen = ({ route }) => {
     cargarDatos();
   }, [tabla]);
 
+  // Filtrar datos según búsqueda
+  useEffect(() => {
+    if (searchText.trim() === '') {
+      setDatosFiltrados(datos);
+    } else {
+      const filtrados = datos.filter(item => {
+        return atributos.some(attr => {
+          const valor = String(item[attr] || '').toLowerCase();
+          return valor.includes(searchText.toLowerCase());
+        });
+      });
+      setDatosFiltrados(filtrados);
+    }
+  }, [searchText, datos, atributos]);
+
   const onRefresh = () => {
     setRefreshing(true);
     cargarDatos();
@@ -74,26 +91,23 @@ const CrudTableScreen = ({ route }) => {
   // Manejar nuevo registro
   const handleNuevo = () => {
     setEditingItem(null);
-    
-    // Crear objeto vacío con los atributos
     const nuevoData = {};
     atributos.forEach(attr => {
-      if (attr !== atributos[0]) { // No incluir el ID para nuevo registro
+      if (attr !== atributos[0]) {
         nuevoData[attr] = '';
       }
     });
-    
     setFormData(nuevoData);
     setModalVisible(true);
   };
 
   // Manejar eliminación
   const handleEliminar = (item) => {
-    const id = item[atributos[0]]; // Primero atributo es el ID
+    const id = item[atributos[0]];
     
     Alert.alert(
       'Confirmar Eliminación',
-      `¿Estás seguro de eliminar el registro con ID ${id}?`,
+      `¿Estás seguro de eliminar este registro?`,
       [
         { text: 'Cancelar', style: 'cancel' },
         { 
@@ -110,7 +124,7 @@ const CrudTableScreen = ({ route }) => {
       const response = await apiService.apiCrud('/eliminar', tabla, eid);
       if (response.success) {
         Alert.alert('Éxito', 'Registro eliminado correctamente');
-        cargarDatos(); // Recargar datos
+        cargarDatos();
       } else {
         throw new Error(response.message);
       }
@@ -127,24 +141,22 @@ const CrudTableScreen = ({ route }) => {
     }));
   };
 
-  // Guardar cambios (crear o actualizar)
+  // Guardar cambios
   const guardarCambios = async () => {
     try {
       let response;
       
       if (editingItem) {
-        // Actualizar registro existente
         const id = editingItem[atributos[0]];
         response = await apiService.apiCrud('/actualizar', tabla, id, formData);
       } else {
-        // Crear nuevo registro
         response = await apiService.apiCrud('/insertar', tabla, null, formData);
       }
 
       if (response.success) {
         Alert.alert('Éxito', editingItem ? 'Registro actualizado' : 'Registro creado');
         setModalVisible(false);
-        cargarDatos(); // Recargar datos
+        cargarDatos();
       } else {
         throw new Error(response.message);
       }
@@ -153,52 +165,48 @@ const CrudTableScreen = ({ route }) => {
     }
   };
 
-  // Renderizar cabecera de la tabla
-  const renderHeader = () => (
-    <View style={styles.headerRow}>
-      {atributos.map((atributo, index) => (
-        <View key={atributo} style={[
-          styles.headerCell,
-          index === 0 && styles.idColumn,
-          index === atributos.length - 1 && styles.actionsColumn
-        ]}>
-          <Text style={styles.headerText}>
-            {atributo}
-          </Text>
+  // Renderizar cada tarjeta
+  const renderCard = ({ item }) => (
+    <View style={styles.card}>
+      {/* Header de la tarjeta con ID */}
+      <View style={styles.cardHeader}>
+        <View style={styles.idBadge}>
+          <Text style={styles.idText}>ID: {item[atributos[0]]}</Text>
         </View>
-      ))}
-      <View style={[styles.headerCell, styles.actionsColumn]}>
-        <Text style={styles.headerText}>Acciones</Text>
+        <Text style={styles.timeText}>
+          {new Date().toLocaleDateString()}
+        </Text>
       </View>
-    </View>
-  );
 
-  // Renderizar cada fila de datos
-  const renderItem = ({ item }) => (
-    <View style={styles.dataRow}>
-      {atributos.map((atributo, index) => (
-        <View key={atributo} style={[
-          styles.dataCell,
-          index === 0 && styles.idColumn,
-          index === atributos.length - 1 && styles.actionsColumn
-        ]}>
-          <Text style={styles.cellText} numberOfLines={1}>
-            {String(item[atributo] || '')}
-          </Text>
-        </View>
-      ))}
-      <View style={[styles.dataCell, styles.actionsCell]}>
+      {/* Contenido de la tarjeta - Mostrar todos los atributos excepto el ID */}
+      <View style={styles.cardContent}>
+        {atributos.slice(1).map((atributo, index) => (
+          <View key={atributo} style={styles.fieldRow}>
+            <Text style={styles.fieldLabel}>{atributo}:</Text>
+            <Text style={styles.fieldValue} numberOfLines={2}>
+              {String(item[atributo] || 'N/A')}
+            </Text>
+          </View>
+        ))}
+      </View>
+
+      {/* Separador */}
+      <View style={styles.divider} />
+
+      {/* Botones de acción */}
+      <View style={styles.actionsContainer}>
         <TouchableOpacity 
-          style={[styles.actionButton, styles.editButton]}
+          style={[styles.actionButton, styles.editActionButton]}
           onPress={() => handleEditar(item)}
         >
-          <Text style={styles.actionButtonText}>Editar</Text>
+          <Text style={styles.actionText}>✏️ Editar</Text>
         </TouchableOpacity>
+
         <TouchableOpacity 
-          style={[styles.actionButton, styles.deleteButton]}
+          style={[styles.actionButton, styles.deleteActionButton]}
           onPress={() => handleEliminar(item)}
         >
-          <Text style={styles.actionButtonText}>Eliminar</Text>
+          <Text style={styles.actionText}>🗑️ Eliminar</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -214,36 +222,54 @@ const CrudTableScreen = ({ route }) => {
   }
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.screenHeader}>
-        <Text style={styles.title}>CRUD - {tabla}</Text>
+    <SafeAreaView style={styles.container}>
+      {/* Título de la sección */}
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>{tabla}</Text>
         <TouchableOpacity style={styles.addButton} onPress={handleNuevo}>
           <Text style={styles.addButtonText}>+ Nuevo</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Tabla */}
-      <View style={styles.tableContainer}>
-        {renderHeader()}
-        <FlatList
-          data={datos}
-          renderItem={renderItem}
-          keyExtractor={(item) => String(item[atributos[0]] || Math.random())}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              colors={['#007AFF']}
-            />
-          }
-          ListEmptyComponent={
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>No hay datos disponibles</Text>
-            </View>
-          }
+      {/* Barra de búsqueda */}
+      <View style={styles.searchContainer}>
+        <Text style={styles.searchIcon}>🔍</Text>
+        <TextInput
+          placeholder={`Buscar en ${tabla}...`}
+          value={searchText}
+          onChangeText={setSearchText}
+          style={styles.searchInput}
+          placeholderTextColor="#999"
         />
+        {searchText.length > 0 && (
+          <TouchableOpacity onPress={() => setSearchText('')}>
+            <Text style={styles.clearIcon}>✕</Text>
+          </TouchableOpacity>
+        )}
       </View>
+
+      {/* Lista de tarjetas */}
+      <FlatList
+        data={datosFiltrados}
+        renderItem={renderCard}
+        keyExtractor={(item) => String(item[atributos[0]] || Math.random())}
+        contentContainerStyle={styles.listContainer}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#007AFF']}
+          />
+        }
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>
+              {searchText ? 'No se encontraron resultados' : 'No hay datos disponibles'}
+            </Text>
+          </View>
+        }
+      />
 
       {/* Modal para editar/crear */}
       <Modal
@@ -255,13 +281,12 @@ const CrudTableScreen = ({ route }) => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>
-              {editingItem ? 'Editar Registro' : 'Nuevo Registro'}
+              {editingItem ? '✏️ Editar Registro' : '➕ Nuevo Registro'}
             </Text>
             
             <ScrollView style={styles.formContainer}>
               {atributos.map((atributo, index) => {
                 if (index === 0 && editingItem) {
-                  // Mostrar ID pero no editable
                   return (
                     <View key={atributo} style={styles.inputGroup}>
                       <Text style={styles.label}>{atributo}</Text>
@@ -271,7 +296,6 @@ const CrudTableScreen = ({ route }) => {
                     </View>
                   );
                 } else if (index !== 0 || !editingItem) {
-                  // Campos editables
                   return (
                     <View key={atributo} style={styles.inputGroup}>
                       <Text style={styles.label}>{atributo}</Text>
@@ -280,6 +304,7 @@ const CrudTableScreen = ({ route }) => {
                         value={String(formData[atributo] || '')}
                         onChangeText={(text) => handleInputChange(atributo, text)}
                         placeholder={`Ingrese ${atributo}`}
+                        placeholderTextColor="#999"
                       />
                     </View>
                   );
@@ -307,26 +332,27 @@ const CrudTableScreen = ({ route }) => {
           </View>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#f0f2f5',
   },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#f0f2f5',
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
     color: '#666',
   },
-  screenHeader: {
+  titleContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -336,7 +362,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#e0e0e0',
   },
   title: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
   },
@@ -344,88 +370,128 @@ const styles = StyleSheet.create({
     backgroundColor: '#007AFF',
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 6,
+    borderRadius: 8,
   },
   addButtonText: {
     color: 'white',
     fontWeight: '600',
+    fontSize: 14,
   },
-  tableContainer: {
-    flex: 1,
-    margin: 16,
-  },
-  headerRow: {
+  searchContainer: {
     flexDirection: 'row',
-    backgroundColor: '#007AFF',
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
-    paddingVertical: 12,
-  },
-  dataRow: {
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    paddingVertical: 12,
-  },
-  headerCell: {
-    flex: 1,
-    paddingHorizontal: 8,
-    justifyContent: 'center',
-  },
-  dataCell: {
-    flex: 1,
-    paddingHorizontal: 8,
-    justifyContent: 'center',
-    minHeight: 40,
-  },
-  idColumn: {
-    flex: 0.5,
-  },
-  actionsColumn: {
-    flex: 1.2,
-  },
-  actionsCell: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
     alignItems: 'center',
+    backgroundColor: 'white',
+    marginHorizontal: 16,
+    marginVertical: 12,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
   },
-  headerText: {
+  searchIcon: {
+    fontSize: 18,
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    paddingVertical: 10,
+    fontSize: 16,
+    color: '#333',
+  },
+  clearIcon: {
+    fontSize: 20,
+    color: '#999',
+    paddingHorizontal: 8,
+  },
+  listContainer: {
+    padding: 16,
+  },
+  card: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  idBadge: {
+    backgroundColor: '#007AFF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  idText: {
     color: 'white',
     fontWeight: 'bold',
     fontSize: 12,
   },
-  cellText: {
+  timeText: {
     fontSize: 12,
+    color: '#999',
+  },
+  cardContent: {
+    marginBottom: 12,
+  },
+  fieldRow: {
+    flexDirection: 'row',
+    marginBottom: 8,
+  },
+  fieldLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#666',
+    width: 120,
+  },
+  fieldValue: {
+    fontSize: 14,
     color: '#333',
+    flex: 1,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#e0e0e0',
+    marginVertical: 12,
+  },
+  actionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
   actionButton: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-    minWidth: 60,
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 8,
     alignItems: 'center',
+    marginHorizontal: 4,
   },
-  editButton: {
+  editActionButton: {
     backgroundColor: '#FFA500',
   },
-  deleteButton: {
+  deleteActionButton: {
     backgroundColor: '#FF3B30',
   },
-  actionButtonText: {
+  actionText: {
     color: 'white',
-    fontSize: 10,
     fontWeight: '600',
+    fontSize: 14,
   },
   emptyContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 40,
-    backgroundColor: 'white',
+    paddingVertical: 60,
   },
   emptyText: {
     fontSize: 16,
     color: '#999',
+    textAlign: 'center',
   },
   // Modal Styles
   modalContainer: {
@@ -437,15 +503,15 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 20,
+    borderRadius: 16,
+    padding: 24,
     width: '90%',
     maxHeight: '80%',
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginBottom: 20,
     textAlign: 'center',
     color: '#333',
   },
@@ -453,40 +519,41 @@ const styles = StyleSheet.create({
     maxHeight: 400,
   },
   inputGroup: {
-    marginBottom: 12,
+    marginBottom: 16,
   },
   label: {
     fontSize: 14,
     fontWeight: '600',
-    marginBottom: 4,
+    marginBottom: 6,
     color: '#333',
   },
   textInput: {
     borderWidth: 1,
     borderColor: '#ddd',
-    borderRadius: 6,
-    padding: 10,
+    borderRadius: 8,
+    padding: 12,
     fontSize: 14,
     backgroundColor: '#f9f9f9',
+    color: '#333',
   },
   readOnlyText: {
-    padding: 10,
+    padding: 12,
     fontSize: 14,
     color: '#666',
     backgroundColor: '#f0f0f0',
-    borderRadius: 6,
+    borderRadius: 8,
   },
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 16,
+    marginTop: 20,
   },
   modalButton: {
     flex: 1,
-    padding: 12,
-    borderRadius: 6,
+    padding: 14,
+    borderRadius: 8,
     alignItems: 'center',
-    marginHorizontal: 4,
+    marginHorizontal: 6,
   },
   cancelButton: {
     backgroundColor: '#8E8E93',
@@ -497,7 +564,8 @@ const styles = StyleSheet.create({
   modalButtonText: {
     color: 'white',
     fontWeight: '600',
+    fontSize: 16,
   },
 });
 
-export default CrudTableScreen;
+export default CrudScreen;
