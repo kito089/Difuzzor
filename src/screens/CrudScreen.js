@@ -17,7 +17,7 @@ import { apiService } from '../services/apiService';
 
 
 const CrudTableScreen = ({ route }) => {
-  const { tabla } = route.params || { tabla: 'Clubes' }; // Tabla por defecto
+  const { tabla } = route.params || { tabla: 'Clubs' }; // Tabla por defecto
   const [atributos, setAtributos] = useState([]);
   const [datos, setDatos] = useState([]);
   const [loading, setLoading] = useState(true);
