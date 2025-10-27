@@ -17,27 +17,24 @@ export const apiService = {
     }
   },
 
-  async apiCrud(uri, tabla, id = null, datos = null){
-    let url = API_BASE_URL + '/' + 'crud' + uri + '/' + tabla;
-    if (id){
-      url += `/${id}`;
-    }
-    if (datos){
-      const param = datos.map(valor => 
-        `${encodeURIComponent(clave)}=${encodeURIComponent(valor)}`
-      ).join('&');
-      url += `?${param}`;
-    }
-    try{
-      console.log(`Accediendo a ${url}`);
-      const response = await axios.post(url, { // llamar al endpoint del api
-        body : null,
-      }); 
-      return response.data;
-    } catch (error) {
-      console.error(`Error en el metodo ${url}: `, error.response?.data || error);
-      throw error;
-    }
+  async apiCrud(uri, tabla, id = null, datos = null) {
+      let url = API_BASE_URL + '/crud' + uri + '/' + tabla;
+      if (id) {
+          url += `/${id}`;
+      }
+      if (datos) {
+          // Convertir el objeto datos a una string JSON y luego codificarla
+          const datosStr = JSON.stringify(datos);
+          url += `?datos=${encodeURIComponent(datosStr)}`;
+      }
+      try {
+          console.log(`Accediendo a ${url}`);
+          const response = await axios.get(url);
+          return response.data;
+      } catch (error) {
+          console.error(`Error en el método ${url}: `, error.response?.data || error);
+          throw error;
+      }
   }
 };
 

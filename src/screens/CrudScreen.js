@@ -13,7 +13,8 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { actualizarRegistro, eliminarRegistro, insertarRegistro, obtenerAtributosAPI, obtenerDatosTabla } from '../services/api';
+import { apiService } from '../services/apiService';
+
 
 const CrudTableScreen = ({ route }) => {
   const { tabla } = route.params || { tabla: 'Clubes' }; // Tabla por defecto
@@ -31,12 +32,12 @@ const CrudTableScreen = ({ route }) => {
       setLoading(true);
       
       // Obtener atributos de la tabla
-      const atributosResponse = await obtenerAtributosAPI(tabla);
+      const atributosResponse = await apiService.apiCrud('/atributos',tabla);
       if (atributosResponse.success) {
         setAtributos(atributosResponse.data);
         
         // Obtener datos de la tabla
-        const datosResponse = await obtenerDatosTabla(tabla);
+        const datosResponse = await apiService.apiCrud('/obtener',tabla);
         if (datosResponse.success) {
           setDatos(datosResponse.data);
         } else {
@@ -104,9 +105,9 @@ const CrudTableScreen = ({ route }) => {
     );
   };
 
-  const eliminarRegistroHandler = async (id) => {
+  const eliminarRegistroHandler = async (eid) => {
     try {
-      const response = await eliminarRegistro(tabla, id);
+      const response = await apiService.apiCrud('/eliminar', tabla, eid);
       if (response.success) {
         Alert.alert('Éxito', 'Registro eliminado correctamente');
         cargarDatos(); // Recargar datos
@@ -134,10 +135,10 @@ const CrudTableScreen = ({ route }) => {
       if (editingItem) {
         // Actualizar registro existente
         const id = editingItem[atributos[0]];
-        response = await actualizarRegistro(tabla, id, formData);
+        response = await apiService.apiCrud('/actualizar', tabla, id, formData);
       } else {
         // Crear nuevo registro
-        response = await insertarRegistro(tabla, formData);
+        response = await apiService.apiCrud('/insertar', tabla, null, formData);
       }
 
       if (response.success) {
