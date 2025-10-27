@@ -17,8 +17,9 @@ import {
 } from 'react-native';
 import { apiService } from '../services/apiService';
 
-const CrudCardScreen = ({ route }) => {
-  const { tabla } = route.params || { tabla: 'Clubs' };
+
+const CrudTableScreen = ({ route }) => {
+  const { tabla } = route.params || { tabla: 'Clubs' }; // Tabla por defecto
   const [atributos, setAtributos] = useState([]);
   const [datos, setDatos] = useState([]);
   const [datosFiltrados, setDatosFiltrados] = useState([]);
