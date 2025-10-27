@@ -4,7 +4,6 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
-  Image,
   Modal,
   RefreshControl,
   SafeAreaView,
@@ -569,4 +568,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CrudScreen;
+export default CrudTableScreen;
