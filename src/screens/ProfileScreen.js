@@ -8,6 +8,7 @@ import {
   View,
 } from "react-native";
 import styles from "../styles/ProfileScreenStyles";
+import ProfileCustomScreen from "./ProfileCustomScreen";
 
 // Datos de ejemplo para las publicaciones del usuario
 const USER_POSTS = [
@@ -31,8 +32,36 @@ const USER_POSTS = [
 
 const ProfileScreen = () => {
   const [activeTab, setActiveTab] = useState('Publicaciones');
+  const [isEditing, setIsEditing] = useState(false);
+  const [nombre, setNombre] = useState("Magdalena");
+  const [apellido, setApellido] = useState("Morquecho Reyes");
+  const [descripcion, setDescripcion] = useState("Hola amigos, hablen más soy buena onda siempre estoy activaaa");
 
   const tabs = ['Publicaciones', 'Comentarios', 'Quejas'];
+
+  const handleSaveProfile = (data) => {
+    setNombre(data.nombre);
+    setApellido(data.apellido);
+    setDescripcion(data.descripcion);
+    setIsEditing(false);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+  };
+
+  // Si está en modo edición, mostrar ProfileCustomScreen
+  if (isEditing) {
+    return (
+      <ProfileCustomScreen
+        nombre={nombre}
+        apellido={apellido}
+        descripcion={descripcion}
+        onSave={handleSaveProfile}
+        onCancel={handleCancelEdit}
+      />
+    );
+  }
 
   const renderPost = ({ item }) => (
     <View style={styles.postCard}>
@@ -93,18 +122,21 @@ const ProfileScreen = () => {
       <View style={styles.profileSection}>
         <View style={styles.avatarContainer}>
           <Image
-            source={require('../../assets/defaultavatar.png')}
+            source={require('../../assets/icons/defaultavatar.png')}
             style={styles.avatar}
           />
         </View>
 
-        <Text style={styles.userName}>Magdalena Morquecho Reyes</Text>
+        <Text style={styles.userName}>{nombre} {apellido}</Text>
         <Text style={styles.userMatricula}>Matrícula: 246534</Text>
         <Text style={styles.userBio}>
-          Hola amigos, hablen más soy buena onda siempre estoy facherita
+          {descripcion}
         </Text>
 
-        <TouchableOpacity style={styles.editButton}>
+        <TouchableOpacity 
+          style={styles.editButton}
+          onPress={() => setIsEditing(true)}
+        >
           <Text style={styles.editButtonText}>Editar Perfil ✏️</Text>
         </TouchableOpacity>
 
@@ -128,6 +160,9 @@ const ProfileScreen = () => {
                 activeTab === tab && styles.tabTextActive,
               ]}
             >
+              {tab === 'Publicaciones' && '📝 '}
+              {tab === 'Comentarios' && '💬 '}
+              {tab === 'Quejas' && '⚠️ '}
               {tab}
             </Text>
           </TouchableOpacity>
