@@ -16,10 +16,9 @@ import { useSession } from "../../utils/SessionContext";
 const LoginScreen = () => {
   const { userinfo, setUserInfo, loading, setLoading } = useSession();
 
-  const handleLogin = async () => { // agregar conexion al api
-    setLoading(true);
-
+  const handleLogin = async () => {
     try {
+      setLoading(true);
       console.log('Iniciando proceso de login...');
       const result = await authService.signIn(); // inicio uwu
       console.log('Resultado del login:', result);
@@ -27,15 +26,11 @@ const LoginScreen = () => {
       if (result.success) { // fin
         console.log("Almacenando userInfo en contexto");
         setUserInfo(result.userInfo);
-        Alert.alert('¡Éxito!', `Bienvenido ${result.userInfo?.displayName || 'Usuario'}`);
-        console.log("Navegando a Prueba")
-        navigation.navigate("Prueba");
-      } else { // fin error
-        Alert.alert('Error', result.error || 'Error en el login');
+      }else {
+        console.error("Error durante el login:", result.error);
       }
     } catch (error) {
-      Alert.alert('Error', result.error || 'Error en el login');
-      console.error('Error en handleLogin:', err);
+      console.error('Error en handleLogin:', error);
     } finally {
       setLoading(false);
     }

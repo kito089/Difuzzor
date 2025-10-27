@@ -1,4 +1,14 @@
 // Codigo para manejar el almacenamiento en la app
+
+/*        IMPORTANTE: Cada prueba de Storage debe de Cambiar el 
+          AndroidManifest de tal forma que:
+          android:launchMode="singleTask" => android:launchMode="singleTop"
+          
+          TAMBIEN: Hay que empaquetar el index en el build de la app con:
+                    npx expo export --platform android
+          Y luego instalar el apk release.
+*/
+
 // Nota: Aqui se implementara la logica de almacenamiento para chats, perfil, etc.
 
 import AsyncStorage from "@react-native-async-storage/async-storage";

@@ -12,40 +12,30 @@ import { authService } from "./src/services/authService";
 import { SessionProvider, useSession } from "./src/utils/SessionContext"; // Contexto de autenticación
 
 function AppContent() {
-  const { setUserInfo, setLoading, setCheckingAuth, checkingAuth } = useSession();
-
+  const {checkingAuth, setUserInfo, setCheckingAuth } = useSession();
+  console.log("Entre al app content")
   useEffect(() => {
-    checkAuthentication();
-  }, []);
-
-  const checkAuthentication = async () => {
-    try {
-      setCheckingAuth(true);
-      console.log("Verificando autenticación...");
-
-      const isAuthenticated = await authService.isAuthenticated();
-
-      if (isAuthenticated) {
-        console.log("Usuario autenticado, obteniendo perfil...");
-        const profile = await authService.getCurrentUser();
-        setUserInfo(profile);
-        console.log("Perfil obtenido:", profile);
-      } else {
-        console.log("Usuario no autenticado");
+    const verifyUser = async () => {
+      try{
+        setCheckingAuth(true);
+        console.log("Entre a useEffect");
+        const user = await authService.isAuthenticated(); // verificar si el usuario existe
+        console.log("Usuario verificado:", user);
+        setUserInfo(user);
+      } catch (error) {
+        console.error("Error verificando usuario:", error);
         setUserInfo(null);
+      } finally {
+        setCheckingAuth(false);
       }
-    } catch (error) {
-      console.error("Error verificando autenticación:", error);
-      setUserInfo(null);
-    } finally {
-      setLoading(false);
-      setCheckingAuth(false);
-    }
-  };
+    };
+    verifyUser();
+  }, []);
 
   if (checkingAuth) {
     console.log("Cargando estado de login...");
     return (
+      // CREAR COMPONENTE
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="dark-content" />
         <View style={styles.loadingContainer}>
