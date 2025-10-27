@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from '../screens/HomeScreen';
 import MarketScreen from '../screens/MarketScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import ProductosScreen from '../screens/ProductosScreen';
+import CrudScreen from '../screens/CrudScreen';
 import AgredScreen from '../screens/AgredScreen';
 
 import PruebaScreen from '../screens/PruebaScreen';
