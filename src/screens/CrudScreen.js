@@ -154,6 +154,7 @@ const CrudTableScreen = ({ route }) => {
       const datosSinId = Object.fromEntries(
         Object.entries(formData).filter(([key]) => key !== atributos[0])
       );
+      console.log("Datos a guardar:", datosSinId);
 
       if (editingItem) {
         const id = editingItem[atributos[0]];
@@ -161,7 +162,7 @@ const CrudTableScreen = ({ route }) => {
       } else {
         response = await apiService.apiCrud('/insertar', tabla, null, datosSinId);
       }
-
+      console.log("Respuesta al guardar:", response);
       if (response.success) {
         Alert.alert('Éxito', editingItem ? 'Registro actualizado' : 'Registro creado');
         setModalVisible(false);
