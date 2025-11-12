@@ -4,7 +4,7 @@ const SessionContext = createContext();
 
 export const SessionProvider = ({children}) => {
     const [tokens, setTokens] = useState(null); // Estado de tokens
-    const [loading, setLoading] = useState(true); // Estado de carga inicial
+    const [loading, setLoading] = useState(false); // Estado de carga inicial
     const [userinfo, setUserInfo] = useState(null); // Estado para almacenar la informacion del usuario
     const [checkingAuth, setCheckingAuth] = useState(true); // Estado para verificar autenticacion
 

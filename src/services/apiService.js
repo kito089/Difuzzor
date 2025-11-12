@@ -24,8 +24,11 @@ export const apiService = {
       }
       if (datos) {
           // Convertir el objeto datos a una string JSON y luego codificarla
-          const datosStr = JSON.stringify(datos);
-          url += `?datos=${encodeURIComponent(datosStr)}`;
+        const valores = Array.isArray(datos) ? datos : Object.values(datos);
+        const params = valores
+          .map(valor => `datos=${encodeURIComponent(valor)}`)
+          .join('&');
+        url += `?${params}`;
       }
       try {
           console.log(`Accediendo a ${url}`);

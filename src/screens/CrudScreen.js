@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import MainLayout from "../layouts/MainLayout";
 import { apiService } from '../services/apiService';
 
 
@@ -163,6 +164,7 @@ const CrudTableScreen = ({ route }) => {
       const datosSinId = Object.fromEntries(
         Object.entries(formData).filter(([key]) => key !== atributos[0])
       );
+      console.log("Datos a guardar:", datosSinId);
 
       if (editingItem) {
         const id = editingItem[atributos[0]];
@@ -170,7 +172,7 @@ const CrudTableScreen = ({ route }) => {
       } else {
         response = await apiService.apiCrud('/insertar', tabla, null, datosSinId);
       }
-
+      console.log("Respuesta al guardar:", response);
       if (response.success) {
         Alert.alert('Éxito', editingItem ? 'Registro actualizado' : 'Registro creado');
         setModalVisible(false);
@@ -240,117 +242,119 @@ const CrudTableScreen = ({ route }) => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Título de la sección */}
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>{tabla}</Text>
-        <TouchableOpacity style={styles.addButton} onPress={handleNuevo}>
-          <Text style={styles.addButtonText}>+ Nuevo</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Barra de búsqueda */}
-      <View style={styles.searchContainer}>
-        <Text style={styles.searchIcon}>🔍</Text>
-        <TextInput
-          placeholder={`Buscar en ${tabla}...`}
-          value={searchText}
-          onChangeText={setSearchText}
-          style={styles.searchInput}
-          placeholderTextColor="#999"
-        />
-        {searchText.length > 0 && (
-          <TouchableOpacity onPress={() => setSearchText('')}>
-            <Text style={styles.clearIcon}>✕</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-
-      {/* Lista de tarjetas */}
-      <FlatList
-        data={datosFiltrados}
-        renderItem={renderCard}
-        keyExtractor={(item) => String(item[atributos[0]] || Math.random())}
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={['#007AFF']}
-          />
-        }
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>
-              {searchText ? 'No se encontraron resultados' : 'No hay datos disponibles'}
-            </Text>
+      <MainLayout>
+        <SafeAreaView style={styles.container}>
+          {/* Título de la sección */}
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>{tabla}</Text>
+            <TouchableOpacity style={styles.addButton} onPress={handleNuevo}>
+              <Text style={styles.addButtonText}>+ Nuevo</Text>
+            </TouchableOpacity>
           </View>
-        }
-      />
 
-      {/* Modal para editar/crear */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>
-              {editingItem ? '✏️ Editar Registro' : '➕ Nuevo Registro'}
-            </Text>
-            
-            <ScrollView style={styles.formContainer}>
-              {atributos.map((atributo, index) => {
-                if (index === 0 && editingItem) {
-                  return (
-                    <View key={atributo} style={styles.inputGroup}>
-                      <Text style={styles.label}>{atributo}</Text>
-                      <Text style={styles.readOnlyText}>
-                        {editingItem[atributo]}
-                      </Text>
-                    </View>
-                  );
-                } else if (index !== 0 || !editingItem) {
-                  return (
-                    <View key={atributo} style={styles.inputGroup}>
-                      <Text style={styles.label}>{atributo}</Text>
-                      <TextInput
-                        style={styles.textInput}
-                        value={String(formData[atributo] || '')}
-                        onChangeText={(text) => handleInputChange(atributo, text)}
-                        placeholder={`Ingrese ${atributo}`}
-                        placeholderTextColor="#999"
-                      />
-                    </View>
-                  );
-                }
-                return null;
-              })}
-            </ScrollView>
-
-            <View style={styles.modalButtons}>
-              <TouchableOpacity 
-                style={[styles.modalButton, styles.cancelButton]}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.modalButtonText}>Cancelar</Text>
+          {/* Barra de búsqueda */}
+          <View style={styles.searchContainer}>
+            <Text style={styles.searchIcon}>🔍</Text>
+            <TextInput
+              placeholder={`Buscar en ${tabla}...`}
+              value={searchText}
+              onChangeText={setSearchText}
+              style={styles.searchInput}
+              placeholderTextColor="#999"
+            />
+            {searchText.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchText('')}>
+                <Text style={styles.clearIcon}>✕</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
-                style={[styles.modalButton, styles.saveButton]}
-                onPress={guardarCambios}
-              >
-                <Text style={styles.modalButtonText}>
-                  {editingItem ? 'Actualizar' : 'Crear'}
+            )}
+          </View>
+
+          {/* Lista de tarjetas */}
+          <FlatList
+            data={datosFiltrados}
+            renderItem={renderCard}
+            keyExtractor={(item) => String(item[atributos[0]] || Math.random())}
+            contentContainerStyle={styles.listContainer}
+            showsVerticalScrollIndicator={false}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={['#007AFF']}
+              />
+            }
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>
+                  {searchText ? 'No se encontraron resultados' : 'No hay datos disponibles'}
                 </Text>
-              </TouchableOpacity>
+              </View>
+            }
+          />
+
+          {/* Modal para editar/crear */}
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>
+                  {editingItem ? '✏️ Editar Registro' : '➕ Nuevo Registro'}
+                </Text>
+                
+                <ScrollView style={styles.formContainer}>
+                  {atributos.map((atributo, index) => {
+                    if (index === 0 && editingItem) {
+                      return (
+                        <View key={atributo} style={styles.inputGroup}>
+                          <Text style={styles.label}>{atributo}</Text>
+                          <Text style={styles.readOnlyText}>
+                            {editingItem[atributo]}
+                          </Text>
+                        </View>
+                      );
+                    } else if (index !== 0 || !editingItem) {
+                      return (
+                        <View key={atributo} style={styles.inputGroup}>
+                          <Text style={styles.label}>{atributo}</Text>
+                          <TextInput
+                            style={styles.textInput}
+                            value={String(formData[atributo] || '')}
+                            onChangeText={(text) => handleInputChange(atributo, text)}
+                            placeholder={`Ingrese ${atributo}`}
+                            placeholderTextColor="#999"
+                          />
+                        </View>
+                      );
+                    }
+                    return null;
+                  })}
+                </ScrollView>
+
+                <View style={styles.modalButtons}>
+                  <TouchableOpacity 
+                    style={[styles.modalButton, styles.cancelButton]}
+                    onPress={() => setModalVisible(false)}
+                  >
+                    <Text style={styles.modalButtonText}>Cancelar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={[styles.modalButton, styles.saveButton]}
+                    onPress={guardarCambios}
+                  >
+                    <Text style={styles.modalButtonText}>
+                      {editingItem ? 'Actualizar' : 'Crear'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
-          </View>
-        </View>
-      </Modal>
-    </SafeAreaView>
+          </Modal>
+        </SafeAreaView>
+      </MainLayout>
   );
 };
 
