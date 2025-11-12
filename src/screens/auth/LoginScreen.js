@@ -32,6 +32,7 @@ const LoginScreen = () => {
     } catch (error) {
       console.error('Error en handleLogin:', error);
     } finally {
+      console.log("Variable de estado lodaing a false");
       setLoading(false);
     }
   };
