@@ -19,31 +19,34 @@ import { apiService } from '../services/apiService';
 
 
 const CrudTableScreen = ({ route }) => {
-  const { tabla } = route.params || { tabla: 'Clubs' }; // Tabla por defecto
-  const [atributos, setAtributos] = useState([]);
-  const [datos, setDatos] = useState([]);
-  const [datosFiltrados, setDatosFiltrados] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [editingItem, setEditingItem] = useState(null);
-  const [formData, setFormData] = useState({});
-  const [searchText, setSearchText] = useState('');
+  const { tabla } = route.params || { tabla: 'Clubs' }; // Tabla a gestionar puede ser cualquiera 
+  const [atributos, setAtributos] = useState([]);//Guarda los nombres de las columnas de la tabla (ej. id, nombre, email).
+  const [datos, setDatos] = useState([]); //Guarda los datos obtenidos de la tabla
+  const [datosFiltrados, setDatosFiltrados] = useState([]);//Guarda los datos que coinciden con el texto de búsqueda.
+  const [loading, setLoading] = useState(true);//Controla el indicador de carga (mientras se obtienen los datos).
+  const [refreshing, setRefreshing] = useState(false);//Controla el estado de actualización al hacer "pull to refresh".
+  const [modalVisible, setModalVisible] = useState(false);//Muestra u oculta el modal del formulario.
+  const [editingItem, setEditingItem] = useState(null);//Guarda el registro que se está editando (si hay uno).
+  const [formData, setFormData] = useState({});//Almacena los datos del formulario (para editar o crear).
+  const [searchText, setSearchText] = useState('');//Guarda lo que el usuario escribe en el buscador.
 
   // Cargar datos de la API
   const cargarDatos = async () => {
     try {
       setLoading(true);
-      
+
+      //obtener atributos(columnas)
       const atributosResponse = await apiService.apiCrud('/atributos', tabla);
       console.log("Atributos response:", atributosResponse);
       if (atributosResponse.success) {
         console.log("Estableciendo atributos:", atributosResponse.atributos);
         
         setAtributos(atributosResponse.atributos);
-        
+
+        //obtenemos todos los Registros de la tabla
         const datosResponse = await apiService.apiCrud('/obtener', tabla);
         console.log("Datos response:", datosResponse);
+        //respectivo checado de exito
         if (datosResponse.success) {
           console.log("Estableciendo datos:", datosResponse.datos);
           setDatos(datosResponse.datos);
@@ -62,7 +65,8 @@ const CrudTableScreen = ({ route }) => {
       setRefreshing(false);
     }
   };
-
+//Esto hace que los datos se carguen automáticamente al iniciar la pantalla 
+// o cuando cambia la tabla.
   useEffect(() => {
     cargarDatos();
   }, [tabla]);
@@ -81,7 +85,8 @@ const CrudTableScreen = ({ route }) => {
       setDatosFiltrados(filtrados);
     }
   }, [searchText, datos, atributos]);
-
+//Esto permite actualizar la tabla deslizando hacia abajo (usado en FlatList generalmente).
+//tambien conocido como el refresh control
   const onRefresh = () => {
     setRefreshing(true);
     cargarDatos();
@@ -89,6 +94,7 @@ const CrudTableScreen = ({ route }) => {
 
   // Manejar edición
   const handleEditar = (item) => {
+    //abre el modal y rellena con los datos del registro seleccionado
     setEditingItem(item);
     setFormData({ ...item });
     setModalVisible(true);
@@ -96,6 +102,7 @@ const CrudTableScreen = ({ route }) => {
 
   // Manejar nuevo registro
   const handleNuevo = () => {
+    //abre el modal con campos vacíos para crear un nuevo registro
     setEditingItem(null);
     const nuevoData = {};
     atributos.forEach(attr => {
@@ -110,7 +117,7 @@ const CrudTableScreen = ({ route }) => {
   // Manejar eliminación
   const handleEliminar = (item) => {
     const id = item[atributos[0]];
-    
+    //Muestra una respectiva alerta de confirmación antes de eliminar
     Alert.alert(
       'Confirmar Eliminación',
       `¿Estás seguro de eliminar este registro?`,
@@ -119,6 +126,7 @@ const CrudTableScreen = ({ route }) => {
         { 
           text: 'Eliminar', 
           style: 'destructive',
+          //llama al handler de eliminación si se confirma
           onPress: () => eliminarRegistroHandler(id)
         }
       ]
@@ -127,6 +135,7 @@ const CrudTableScreen = ({ route }) => {
 
   const eliminarRegistroHandler = async (eid) => {
     try {
+      //Si la API responde con éxito, recarga los datos.
       const response = await apiService.apiCrud('/eliminar', tabla, eid);
       if (response.success) {
         Alert.alert('Éxito', 'Registro eliminado correctamente');
