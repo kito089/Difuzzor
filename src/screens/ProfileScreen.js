@@ -1,27 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   SafeAreaView,
   Text,
   TouchableOpacity,
   View,
-  ActivityIndicator,
 } from 'react-native';
-import styles from '../styles/ProfileScreenStyles';
-import ProfileCustomScreen from './ProfileCustomScreen';
-import PostCard from '../components/PostCard';
 import CommentCard from '../components/CommentCard';
 import ComplaintCard from '../components/ComplaintCard';
+import PostCard from '../components/PostCard';
 import { apiService } from '../services/apiService';
+import { authService } from '../services/authService';
+import styles from '../styles/ProfileScreenStyles';
+import ProfileCustomScreen from './ProfileCustomScreen';
 
 const ProfileScreen = () => {
   const [activeTab, setActiveTab] = useState('Publicaciones');
   const [isEditing, setIsEditing] = useState(false);
-  const [nombre, setNombre] = useState('Magdalena');
-  const [apellido, setApellido] = useState('Morquecho Reyes');
-  const [matricula, setMatricula] = useState('246534');
-  const [descripcion, setDescripcion] = useState('Hola amigos, hablen más soy buena onda siempre estoy activaaa');
+  const [nombre, setNombre] = useState('');
+  const [apellido, setApellido] = useState('');
+  const [matricula, setMatricula] = useState('');
+  const [descripcion, setDescripcion] = useState('');
   
   const [userPosts, setUserPosts] = useState([]);
   const [userComments, setUserComments] = useState([]);
@@ -44,15 +45,15 @@ const ProfileScreen = () => {
 
   // Manejadores de acciones del post
   const handleReact = (postId) => {
-    console.log('Reaccionó al post:', postId);
+    console.log('Reaccionï¿½ al post:', postId);
   };
 
   const handleComment = (postId) => {
-    console.log('Comentó el post:', postId);
+    console.log('Comentï¿½ el post:', postId);
   };
 
   const handleShare = (postId) => {
-    console.log('Compartió el post:', postId);
+    console.log('Compartiï¿½ el post:', postId);
   };
 
   const handleDelete = async (postId) => {
@@ -64,11 +65,24 @@ const ProfileScreen = () => {
     }
   };
 
-  // Fetch de datos
+  // Fetch de datos del usuario y posts
   const fetchUserData = async () => {
     setLoading(true);
     setError(null);
     try {
+      // Obtener informaciÃ³n del usuario autenticado
+      const currentUser = await authService.getCurrentUser();
+      
+      if (currentUser) {
+        setNombre(currentUser.nombre || '');
+        setApellido(currentUser.apellido || '');
+        setMatricula(currentUser.matricula || '');
+        setDescripcion(currentUser.descripcion || '');
+      } else {
+        setError('No se pudo obtener la informaciÃ³n del usuario');
+      }
+
+      // Obtener posts, comentarios y quejas del usuario
       const [postsData, commentsData, complaintsData] = await Promise.all([
         apiService.getPosts('posts').catch(() => []),
         apiService.getPosts('comentarios').catch(() => []),
@@ -120,7 +134,7 @@ const ProfileScreen = () => {
       {/* Banner azul */}
       <View style={styles.banner} />
 
-      {/* Información del perfil */}
+      {/* Informaciï¿½n del perfil */}
       <View style={styles.profileSection}>
         <View style={styles.avatarContainer}>
           <Image
@@ -130,7 +144,7 @@ const ProfileScreen = () => {
         </View>
 
         <Text style={styles.userName}>{nombre} {apellido}</Text>
-        <Text style={styles.userMatricula}>Matrícula: {matricula}</Text>
+        <Text style={styles.userMatricula}>Matrï¿½cula: {matricula}</Text>
         <Text style={styles.userBio}>{descripcion}</Text>
 
         <TouchableOpacity
@@ -189,7 +203,7 @@ const ProfileScreen = () => {
           renderItem={renderPost}
           keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
           ListHeaderComponent={renderHeader}
-          ListEmptyComponent={renderEmptyState('No hay publicaciones aún')}
+          ListEmptyComponent={renderEmptyState('No hay publicaciones aï¿½n')}
           showsVerticalScrollIndicator={false}
         />
       ) : activeTab === 'Comentarios' ? (
@@ -198,7 +212,7 @@ const ProfileScreen = () => {
           renderItem={renderComment}
           keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
           ListHeaderComponent={renderHeader}
-          ListEmptyComponent={renderEmptyState('No hay comentarios aún')}
+          ListEmptyComponent={renderEmptyState('No hay comentarios aï¿½n')}
           showsVerticalScrollIndicator={false}
         />
       ) : (

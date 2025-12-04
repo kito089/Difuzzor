@@ -1,7 +1,7 @@
 import { AZURE_CLIENT_ID, AZURE_TENANT_ID } from "@env"; // Variables de entorno para conectar con Microsoft
 import * as AuthSession from 'expo-auth-session'; // Libreria para autenticacion con expo
 import * as WebBrowser from 'expo-web-browser'; // web view de expo
-import { getStoredTokens, storeTokens, clearTokens  } from "../utils/storage"; // para verificar si hay token guardado
+import { clearTokens, getStoredTokens, storeTokens } from "../utils/storage"; // para verificar si hay token guardado
 import { apiService } from "./apiService";
 
 WebBrowser.maybeCompleteAuthSession(); // web view de expo
@@ -143,14 +143,15 @@ async signIn() {
 
   async getCurrentUser() {
     try {
-        const tokens = await getStoredTokens();
-        if (tokens && tokens.accessToken) {
-          res = await apiService.apiAuth("getUserInfo",tokens.accessToken);
-          await storeUserProfile(res.user);
-          console.log('Información del usuario actual:', res.user);
-          return res.user;
-        }// manejar caso de no tokens
-        return null;      
+      const tokens = await getStoredTokens();
+      if (tokens && tokens.access_token) {
+        const res = await apiService.apiAuth("getUserInfo", tokens.access_token);
+        console.log('Información del usuario actual:', res.user);
+        return res.user;
+      }
+      // Manejar caso de no tokens
+      console.log('No hay tokens almacenados');
+      return null;      
     } catch (error) {
       console.error('Error obteniendo usuario actual:', error);
       return null;

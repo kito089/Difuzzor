@@ -1,5 +1,5 @@
-import axios from "axios";
 import { API_BASE_URL } from "@env";
+import axios from "axios";
 
 export const apiService = {
 
@@ -31,7 +31,23 @@ export const apiService = {
           console.error(`Error en el método ${url}: `, error.response?.data || error);
           throw error;
       }
+  },
+
+  async getPosts(tabla) {
+    try {
+      return await this.apiCrud('/read', tabla);
+    } catch (error) {
+      console.error(`Error obteniendo ${tabla}:`, error);
+      throw error;
+    }
+  },
+
+  async deletePost(id, tabla) {
+    try {
+      return await this.apiCrud('/delete', tabla, id);
+    } catch (error) {
+      console.error(`Error eliminando post de ${tabla}:`, error);
+      throw error;
+    }
   }
 };
-
-// Se agregaran las funciones para interactuar con el backend aqui
