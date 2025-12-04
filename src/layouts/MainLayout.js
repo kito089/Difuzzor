@@ -7,13 +7,13 @@ import gato from '../../assets/gato.png';
 
 export default function MainLayout({ children }) {
     const navigation = useNavigation();
-    const { userinfo, setUserInfo, loading, setLoading } = useSession();
+    const { userauth, setUserAuth, loading, setLoading } = useSession();
 
     const handleLogout = async () => {
         try{
             setLoading(true);
             await authService.signOut();
-            await setUserInfo(null); // Limpiar la información del usuario en App.js
+            await setUserAuth(false); // Limpiar la información del usuario en App.js
         }catch(error){
             console.error("Error during sign out:", error);
         }finally{
