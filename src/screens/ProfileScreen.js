@@ -1,3 +1,4 @@
+//principal de la pantalla de perfil
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
