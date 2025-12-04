@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import styles from "../styles/HomeScreenStyles";
 import postcard from "../styles/PostCard";
+import MainLayout from "../layouts/MainLayout";
 
 // Datos de ejemplo para las publicaciones
 const POSTS_DATA = [
@@ -131,65 +132,67 @@ const HomeScreen = () => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Título de la sección */}
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>Eventos</Text>
-        <TouchableOpacity>
-          <Image
-            source={require('../../assets/megafono.png')}
-            style={styles.menuIcon}
-          />
-        </TouchableOpacity>
-      </View>
-
-      {/* Barra de búsqueda */}
-      <View style={styles.searchContainer}>
-        <Image
-          source={require('../../assets/search.png')}
-          style={styles.searchIcon}
-        />
-        <TextInput
-          placeholder="Buscar publicaciones, personas..."
-          value={searchText}
-          onChangeText={setSearchText}
-          style={styles.searchInput}
-          placeholderTextColor="#999"
-        />
-      </View>
-
-      {/* Filtros */}
-      <View style={styles.filtersContainer}>
-        {filters.map((filter) => (
-          <TouchableOpacity
-            key={filter}
-            style={[
-              styles.filterButton,
-              selectedFilter === filter && styles.filterButtonActive,
-            ]}
-            onPress={() => setSelectedFilter(filter)}
-          >
-            <Text
-              style={[
-                styles.filterText,
-                selectedFilter === filter && styles.filterTextActive,
-              ]}
-            >
-              {filter}
-            </Text>
+    <MainLayout>
+      <SafeAreaView style={styles.container}>
+        {/* Título de la sección */}
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Eventos</Text>
+          <TouchableOpacity>
+            <Image
+              source={require('../../assets/megafono.png')}
+              style={styles.menuIcon}
+            />
           </TouchableOpacity>
-        ))}
-      </View>
+        </View>
 
-      {/* Lista de publicaciones */}
-      <FlatList
-        data={POSTS_DATA}
-        renderItem={renderPost}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
-      />
-    </SafeAreaView>
+        {/* Barra de búsqueda */}
+        <View style={styles.searchContainer}>
+          <Image
+            source={require('../../assets/search.png')}
+            style={styles.searchIcon}
+          />
+          <TextInput
+            placeholder="Buscar publicaciones, personas..."
+            value={searchText}
+            onChangeText={setSearchText}
+            style={styles.searchInput}
+            placeholderTextColor="#999"
+          />
+        </View>
+
+        {/* Filtros */}
+        <View style={styles.filtersContainer}>
+          {filters.map((filter) => (
+            <TouchableOpacity
+              key={filter}
+              style={[
+                styles.filterButton,
+                selectedFilter === filter && styles.filterButtonActive,
+              ]}
+              onPress={() => setSelectedFilter(filter)}
+            >
+              <Text
+                style={[
+                  styles.filterText,
+                  selectedFilter === filter && styles.filterTextActive,
+                ]}
+              >
+                {filter}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Lista de publicaciones */}
+        <FlatList
+          data={POSTS_DATA}
+          renderItem={renderPost}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContainer}
+          showsVerticalScrollIndicator={false}
+        />
+      </SafeAreaView>
+    </MainLayout>
   );
 };
 

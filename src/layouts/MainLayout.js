@@ -48,7 +48,7 @@ export default function MainLayout({ children }) {
             <View style={stylesLayout.footer}>
                 <TouchableOpacity
                     style={stylesLayout.tab}
-                    onPress={() => navigation.navigate('Market')}
+                    onPress={() => navigation.navigate('Crud', { tabla: 'Departamento' })}
                     >
                     <Image
                         source={require('../../assets/icons/Tienda.png')}
