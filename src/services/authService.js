@@ -104,7 +104,14 @@ async signIn() {
       
       if (isExpired) {
         console.log(' 3.5 Token expirado, intentando renovar...');
-        await apiService.apiAuth("RefreshToken", tokens.refresh_token);
+        tokens = await apiService.apiAuth("RefreshToken", tokens.refresh_token);
+        if (tokens.success && tokens.access_token) {
+          await storeTokens(tokens);
+          console.log(' 3.6 Token renovado exitosamente');
+        } else {
+          console.log(' 3.7 No se pudo renovar el token, Usuario no autenticado');
+          return null;
+        }
       }
 
       // Validar token con Microsoft Graph
