@@ -19,7 +19,7 @@ const CommentCard = ({ comment }) => {
         <Text style={styles.time}>{comment.time}</Text>
         <View style={styles.reactionContainer}>
           <Image
-            source={require('../../assets/like.png')}
+            source={require('../../assets/splash-icon.png')}
             style={styles.reactionIcon}
           />
           <Text style={styles.reactionText}>{comment.reactions || 0}</Text>
