@@ -12,19 +12,19 @@ import { authService } from "./src/services/authService";
 import { SessionProvider, useSession } from "./src/utils/SessionContext"; // Contexto de autenticación
 
 function AppContent() {
-  const {checkingAuth, setUserInfo, setCheckingAuth } = useSession();
+  const {checkingAuth, setUserAuth, setCheckingAuth } = useSession();
   console.log("Entre al app content")
   useEffect(() => {
     const verifyUser = async () => {
       try{
         setCheckingAuth(true);
         console.log("Entre a useEffect");
-        const user = await authService.isAuthenticated(); // verificar si el usuario existe
-        console.log("Usuario verificado:", user);
-        setUserInfo(user);
+        const verify = await authService.isAuthenticated(); // verificar si el usuario existe
+        console.log("Usuario verificado:", verify);
+        setUserAuth(verify);
       } catch (error) {
         console.error("Error verificando usuario:", error);
-        setUserInfo(null);
+        setUserAuth(false);
       } finally {
         setCheckingAuth(false);
       }

@@ -5,10 +5,10 @@ import AppNavigator from "./AppNavigator";
 import { useSession } from "../utils/SessionContext";
 
 export default function IndexNavigation() {
-  const { userinfo } = useSession();
+  const { userauth } = useSession();
   return (
     <NavigationContainer>
-      {userinfo ? <AppNavigator /> : <AuthNavigator />} 
+      {userauth ? <AppNavigator /> : <AuthNavigator />} 
     </NavigationContainer>
   );
 }

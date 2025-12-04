@@ -14,7 +14,7 @@ import { authService } from '../../services/authService';
 import { useSession } from "../../utils/SessionContext";
 
 const LoginScreen = () => {
-  const { userinfo, setUserInfo, loading, setLoading } = useSession();
+  const { userauth, setUserAuth, loading, setLoading } = useSession();
 
   const handleLogin = async () => {
     try {
@@ -24,8 +24,8 @@ const LoginScreen = () => {
       console.log('Resultado del login:', result);
       console.log("Success:", result.success);
       if (result.success) { // fin
-        console.log("Almacenando userInfo en contexto");
-        setUserInfo(result.userInfo);
+        console.log("Almacenando autenticacion de usuario en contexto");
+        setUserAuth(true);
       }else {
         console.error("Error durante el login:", result.error);
       }

@@ -2,7 +2,6 @@ import { AZURE_CLIENT_ID, AZURE_TENANT_ID } from "@env"; // Variables de entorno
 import * as AuthSession from 'expo-auth-session'; // Libreria para autenticacion con expo
 import * as WebBrowser from 'expo-web-browser'; // web view de expo
 import { getStoredTokens, storeTokens, clearTokens  } from "../utils/storage"; // para verificar si hay token guardado
-import { storeUserProfile, getStoredUserProfile } from "../utils/storage"; // para guardar y obtener perfil de usuario
 import { apiService } from "./apiService";
 
 WebBrowser.maybeCompleteAuthSession(); // web view de expo
@@ -67,15 +66,9 @@ async signIn() {
           // Almacenar tokens
           await storeTokens(tokenResult);
           
-          // Obtener y almacenar información del usuario
-          const res = await apiService.apiAuth("getUserInfo",tokenResult.access_token);
-          console.log("Información del usuario obtenida:", res);
-          await storeUserProfile(res.user);
-          
           return {
             success: true,
             tokens: tokenResult,
-            userInfo: res.user,
           };
         } else {
           return { 
@@ -121,9 +114,8 @@ async signIn() {
         console.log("Token inválido, Usuario no autenticado");
         return null;
       }
-      console.log(" 5. Usuario autenticado");
-      const profile = await this.getCurrentUser();
-      return profile; 
+
+      return true; 
 
     } catch (error) {
       console.error('Error verificando autenticación:', error);
@@ -151,17 +143,14 @@ async signIn() {
 
   async getCurrentUser() {
     try {
-      let userInfo = await getStoredUserProfile();
-      
-      if (!userInfo) {
         const tokens = await getStoredTokens();
         if (tokens && tokens.accessToken) {
           res = await apiService.apiAuth("getUserInfo",tokens.accessToken);
           await storeUserProfile(res.user);
-        }
-      }
-      console.log('Información del usuario actual:', userInfo);
-      return userInfo;
+          console.log('Información del usuario actual:', res.user);
+          return res.user;
+        }// manejar caso de no tokens
+        return null;      
     } catch (error) {
       console.error('Error obteniendo usuario actual:', error);
       return null;

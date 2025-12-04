@@ -70,22 +70,3 @@ export const clearTokens = async () => { // eliminar token al cerrar sesion
     console.error("Error eliminando tokens:", error);
   }
 };
-
-export const storeUserProfile = async (profile) => { // guardar perfil de usuario
-  try {
-    await AsyncStorage.setItem(STORAGE_KEYS.USER_INFO, JSON.stringify(profile));
-    console.log("Perfil guardado correctamente");
-  } catch (error) {
-    console.error("Error guardando perfil:", error);
-  }
-};
-
-export const getStoredUserProfile = async () => { // obtener perfil de usuario
-  try {
-    const profile = await AsyncStorage.getItem(STORAGE_KEYS.USER_INFO);
-    return profile ? JSON.parse(profile) : null;
-  } catch (error) {
-    console.error("Error obteniendo perfil:", error);
-    return null;
-  }
-};
