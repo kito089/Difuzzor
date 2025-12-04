@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 import styles from "../styles/HomeScreenStyles";
-import postcard from "../styles/PostCard";
+import postcard from "../styles/PostCardStyles";
 import MainLayout from "../layouts/MainLayout";
 
 // Datos de ejemplo para las publicaciones

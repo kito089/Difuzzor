@@ -1,14 +1,14 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
 const postCardStyles = StyleSheet.create({
-  // Tarjeta de publicaciÃ³n
+  // Tarjeta de publicación
   postCard: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: '#FFFFFF',
     borderRadius: 15,
     marginHorizontal: 14,
     marginBottom: 12,
     padding: 16,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -20,8 +20,8 @@ const postCardStyles = StyleSheet.create({
 
   // Header del post
   postHeader: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 12,
   },
   avatar: {
@@ -34,69 +34,70 @@ const postCardStyles = StyleSheet.create({
     flex: 1,
   },
   userName: {
-    color: "#000000",
+    color: '#000000',
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
     marginBottom: 2,
   },
   postTime: {
-    color: "#8C7462",
+    color: '#8C7462',
     fontSize: 11,
   },
   categoryBadge: {
-    backgroundColor: "#F0F0F0",
+    backgroundColor: '#F0F0F0',
     borderRadius: 12,
     paddingVertical: 4,
     paddingHorizontal: 10,
   },
   categoryText: {
-    color: "#000000",
+    color: '#000000',
     fontSize: 12,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 
   // Contenido
   postContent: {
-    color: "#000000",
+    color: '#000000',
     fontSize: 14,
     lineHeight: 20,
     marginBottom: 12,
   },
   postImage: {
-    width: "100%",
+    width: '100%',
     height: 200,
     borderRadius: 10,
     marginBottom: 12,
-    backgroundColor: "#D9D9D9",
+    backgroundColor: '#D9D9D9',
   },
 
   // Stats
   statsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 8,
   },
   statsText: {
-    color: "#B5B6BF",
+    color: '#B5B6BF',
     fontSize: 12,
   },
 
   // Divisor
   divider: {
     height: 1,
-    backgroundColor: "#E0E0E0",
+    backgroundColor: '#E0E0E0',
     marginVertical: 8,
   },
 
   // Acciones
   actionsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     paddingTop: 4,
   },
   actionButton: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
   },
   actionIcon: {
     width: 18,
@@ -104,9 +105,9 @@ const postCardStyles = StyleSheet.create({
     marginRight: 4,
   },
   actionText: {
-    color: "#16232C",
+    color: '#16232C',
     fontSize: 12,
-    fontWeight: "500",
+    fontWeight: '500',
   },
 });
 

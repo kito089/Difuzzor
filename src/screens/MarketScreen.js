@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 import styles from "../styles/HomeScreenStyles";
-import postcard from "../styles/PostCard";
+import postcard from "../styles/PostCardStyles";
 
 // Datos de ejemplo para productos del mercado
 const MARKET_DATA = [
@@ -21,7 +21,7 @@ const MARKET_DATA = [
       time: 'Hace 2 horas',
     },
     category: null,
-    content: 'Estoy vendiendo chavas marca chidas en $16, hay variedad de chetos.',
+    content: 'Estoy vendiendo chavas marca chidas en , hay variedad de chetos.',
     image: require('../../assets/comida.png'),
     reactions: 15,
     comments: 5,
@@ -34,7 +34,7 @@ const MARKET_DATA = [
       time: 'Hace 3 horas',
     },
     category: null,
-    content: 'Se venden ricas galletas de Oataco, cada pieza estÃ¡ en $12, tambiÃ©n se venden panes en $7 la pieza.',
+    content: 'Se venden ricas galletas de Oataco, cada pieza está en , también se venden panes en  la pieza.',
     image: require('../../assets/comida.png'),
     reactions: 32,
     comments: 8,
@@ -42,12 +42,12 @@ const MARKET_DATA = [
   {
     id: '3',
     user: {
-      name: 'MarÃ­a GÃ³mez',
+      name: 'María Gómez',
       avatar: require('../../assets/icons/defaultavatar.png'),
       time: 'Hace 5 horas',
     },
     category: null,
-    content: 'Vendo tortas preparadas $25, incluye refresco. Entrega en la UTA.',
+    content: 'Vendo tortas preparadas , incluye refresco. Entrega en la UTA.',
     image: require('../../assets/comida.png'),
     reactions: 28,
     comments: 12,
@@ -90,7 +90,7 @@ const MarketScreen = () => {
       {/* Separador */}
   <View style={postcard.divider} />
 
-      {/* Botones de acciÃ³n */}
+      {/* Botones de acción */}
       <View style={postcard.actionsContainer}>
         <TouchableOpacity style={postcard.actionButton}>
           <Image
@@ -129,12 +129,12 @@ const MarketScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* TÃ­tulo de la secciÃ³n */}
+      {/* Título de la sección */}
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Mercado UTA ðŸ›’</Text>
+        <Text style={styles.title}>Mercado UTA </Text>
       </View>
 
-      {/* Barra de bÃºsqueda */}
+      {/* Barra de búsqueda */}
       <View style={styles.searchContainer}>
         <Image
           source={require('../../assets/search.png')}
