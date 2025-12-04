@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   FlatList,
   Image,
@@ -6,36 +6,28 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import styles from "../styles/ProfileScreenStyles";
-import ProfileCustomScreen from "./ProfileCustomScreen";
-
-// Datos de ejemplo para las publicaciones del usuario
-const USER_POSTS = [
-  {
-    id: '1',
-    content: 'Hermoso paisaje!',
-    time: 'Hace 2 horas',
-    image: require('../../assets/paisaje.jpg'),
-    reactions: 15,
-    comments: 3,
-  },
-  {
-    id: '2',
-    content: 'Amigos busco alguien que me venda unos chetos, porfis!!',
-    time: 'Hace 1 semana',
-    image: null,
-    reactions: 8,
-    comments: 12,
-  },
-];
+  ActivityIndicator,
+} from 'react-native';
+import styles from '../styles/ProfileScreenStyles';
+import ProfileCustomScreen from './ProfileCustomScreen';
+import PostCard from '../components/PostCard';
+import CommentCard from '../components/CommentCard';
+import ComplaintCard from '../components/ComplaintCard';
+import { apiService } from '../services/apiService';
 
 const ProfileScreen = () => {
   const [activeTab, setActiveTab] = useState('Publicaciones');
   const [isEditing, setIsEditing] = useState(false);
-  const [nombre, setNombre] = useState("Magdalena");
-  const [apellido, setApellido] = useState("Morquecho Reyes");
-  const [descripcion, setDescripcion] = useState("Hola amigos, hablen m√°s soy buena onda siempre estoy activaaa");
+  const [nombre, setNombre] = useState('Magdalena');
+  const [apellido, setApellido] = useState('Morquecho Reyes');
+  const [matricula, setMatricula] = useState('246534');
+  const [descripcion, setDescripcion] = useState('Hola amigos, hablen m·s soy buena onda siempre estoy activaaa');
+  
+  const [userPosts, setUserPosts] = useState([]);
+  const [userComments, setUserComments] = useState([]);
+  const [userComplaints, setUserComplaints] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const tabs = ['Publicaciones', 'Comentarios', 'Quejas'];
 
@@ -50,7 +42,54 @@ const ProfileScreen = () => {
     setIsEditing(false);
   };
 
-  // Si est√° en modo edici√≥n, mostrar ProfileCustomScreen
+  // Manejadores de acciones del post
+  const handleReact = (postId) => {
+    console.log('ReaccionÛ al post:', postId);
+  };
+
+  const handleComment = (postId) => {
+    console.log('ComentÛ el post:', postId);
+  };
+
+  const handleShare = (postId) => {
+    console.log('CompartiÛ el post:', postId);
+  };
+
+  const handleDelete = async (postId) => {
+    try {
+      await apiService.deletePost(postId, 'posts');
+      setUserPosts(userPosts.filter(post => post.id !== postId));
+    } catch (e) {
+      console.error('Error eliminando post:', e);
+    }
+  };
+
+  // Fetch de datos
+  const fetchUserData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [postsData, commentsData, complaintsData] = await Promise.all([
+        apiService.getPosts('posts').catch(() => []),
+        apiService.getPosts('comentarios').catch(() => []),
+        apiService.getPosts('quejas').catch(() => []),
+      ]);
+
+      setUserPosts(Array.isArray(postsData) ? postsData : []);
+      setUserComments(Array.isArray(commentsData) ? commentsData : []);
+      setUserComplaints(Array.isArray(complaintsData) ? complaintsData : []);
+    } catch (e) {
+      console.error('Error al obtener datos:', e);
+      setError('No se pudieron cargar los datos');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
   if (isEditing) {
     return (
       <ProfileCustomScreen
@@ -64,61 +103,24 @@ const ProfileScreen = () => {
   }
 
   const renderPost = ({ item }) => (
-    <View style={styles.postCard}>
-      <Text style={styles.postContent}>{item.content}</Text>
-      <Text style={styles.postTime}>{item.time}</Text>
-
-      {item.image && (
-        <Image source={item.image} style={styles.postImage} />
-      )}
-
-      <View style={styles.actionsContainer}>
-        <TouchableOpacity style={styles.actionButton}>
-          <Image
-            source={require('../../assets/reaction.png')}
-            style={styles.actionIcon}
-          />
-          <Text style={styles.actionText}>Reaccionar</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionButton}>
-          <Image
-            source={require('../../assets/comment.png')}
-            style={styles.actionIcon}
-          />
-          <Text style={styles.actionText}>Comentar</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionButton}>
-          <Image
-            source={require('../../assets/share.png')}
-            style={styles.actionIcon}
-          />
-          <Text style={styles.actionText}>Compartir</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionButton}>
-          <Image
-            source={require('../../assets/report.png')}
-            style={styles.actionIcon}
-          />
-          <Text style={styles.actionText}>Descartar</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.statsContainer}>
-        <Text style={styles.statsText}>{item.reactions} reacciones</Text>
-        <Text style={styles.statsText}>{item.comments} comentarios</Text>
-      </View>
-    </View>
+    <PostCard
+      post={item}
+      onReact={handleReact}
+      onComment={handleComment}
+      onShare={handleShare}
+      onDelete={handleDelete}
+    />
   );
+
+  const renderComment = ({ item }) => <CommentCard comment={item} />;
+  const renderComplaint = ({ item }) => <ComplaintCard complaint={item} />;
 
   const renderHeader = () => (
     <>
       {/* Banner azul */}
       <View style={styles.banner} />
 
-      {/* Informaci√≥n del perfil */}
+      {/* InformaciÛn del perfil */}
       <View style={styles.profileSection}>
         <View style={styles.avatarContainer}>
           <Image
@@ -128,19 +130,17 @@ const ProfileScreen = () => {
         </View>
 
         <Text style={styles.userName}>{nombre} {apellido}</Text>
-        <Text style={styles.userMatricula}>Matr√≠cula: 246534</Text>
-        <Text style={styles.userBio}>
-          {descripcion}
-        </Text>
+        <Text style={styles.userMatricula}>MatrÌcula: {matricula}</Text>
+        <Text style={styles.userBio}>{descripcion}</Text>
 
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.editButton}
           onPress={() => setIsEditing(true)}
         >
-          <Text style={styles.editButtonText}>Editar Perfil ‚úèÔ∏è</Text>
+          <Text style={styles.editButtonText}>Editar Perfil </Text>
         </TouchableOpacity>
 
-        <Text style={styles.postsCount}>2 Publicaciones</Text>
+        <Text style={styles.postsCount}>{userPosts.length} Publicaciones</Text>
       </View>
 
       {/* Tabs */}
@@ -160,9 +160,9 @@ const ProfileScreen = () => {
                 activeTab === tab && styles.tabTextActive,
               ]}
             >
-              {tab === 'Publicaciones' && 'üìù '}
-              {tab === 'Comentarios' && 'üí¨ '}
-              {tab === 'Quejas' && '‚ö†Ô∏è '}
+              {tab === 'Publicaciones' && ' '}
+              {tab === 'Comentarios' && ' '}
+              {tab === 'Quejas' && ' '}
               {tab}
             </Text>
           </TouchableOpacity>
@@ -171,34 +171,50 @@ const ProfileScreen = () => {
     </>
   );
 
-  const renderEmptyContent = () => (
+  const renderEmptyState = (message) => (
     <View style={styles.emptyContainer}>
-      <Text style={styles.emptyText}>
-        {activeTab === 'Comentarios' 
-          ? 'No hay comentarios a√∫n' 
-          : 'No hay quejas registradas'}
-      </Text>
+      <Text style={styles.emptyText}>{message}</Text>
     </View>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-      {activeTab === 'Publicaciones' ? (
+      {loading ? (
+        <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
+          <ActivityIndicator size="large" color="#092468" />
+        </View>
+      ) : activeTab === 'Publicaciones' ? (
         <FlatList
-          data={USER_POSTS}
+          data={userPosts}
           renderItem={renderPost}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
           ListHeaderComponent={renderHeader}
+          ListEmptyComponent={renderEmptyState('No hay publicaciones a˙n')}
+          showsVerticalScrollIndicator={false}
+        />
+      ) : activeTab === 'Comentarios' ? (
+        <FlatList
+          data={userComments}
+          renderItem={renderComment}
+          keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
+          ListHeaderComponent={renderHeader}
+          ListEmptyComponent={renderEmptyState('No hay comentarios a˙n')}
           showsVerticalScrollIndicator={false}
         />
       ) : (
         <FlatList
-          data={[]}
-          renderItem={() => null}
+          data={userComplaints}
+          renderItem={renderComplaint}
+          keyExtractor={(item) => item.id?.toString() || Math.random().toString()}
           ListHeaderComponent={renderHeader}
-          ListEmptyComponent={renderEmptyContent}
+          ListEmptyComponent={renderEmptyState('No hay quejas registradas')}
           showsVerticalScrollIndicator={false}
         />
+      )}
+      {error && (
+        <View style={{position:'absolute', bottom:20, left:20, right:20}}>
+          <Text style={{color:'red', textAlign:'center'}}>{error}</Text>
+        </View>
       )}
     </SafeAreaView>
   );
