@@ -1,4 +1,5 @@
 //principal de la pantalla de perfil
+import { API_BASE_URL } from '@env';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -12,6 +13,7 @@ import {
 import CommentCard from '../components/CommentCard';
 import ComplaintCard from '../components/ComplaintCard';
 import PostCard from '../components/PostCard';
+import MainLayout from '../layouts/MainLayout';
 import { apiService } from '../services/apiService';
 import { authService } from '../services/authService';
 import styles from '../styles/ProfileScreenStyles';
@@ -75,8 +77,8 @@ const ProfileScreen = () => {
       const currentUser = await authService.getCurrentUser();
       
       if (currentUser) {
-        setNombre(currentUser.nombre || '');
-        setApellido(currentUser.apellido || '');
+        setNombre(currentUser.nombres || '');
+        setApellido(currentUser.apellids || '');
         setMatricula(currentUser.matricula || '');
         setDescripcion(currentUser.descripcion || '');
       } else {
@@ -107,13 +109,15 @@ const ProfileScreen = () => {
 
   if (isEditing) {
     return (
-      <ProfileCustomScreen
-        nombre={nombre}
-        apellido={apellido}
-        descripcion={descripcion}
-        onSave={handleSaveProfile}
-        onCancel={handleCancelEdit}
-      />
+      <MainLayout>
+        <ProfileCustomScreen
+          nombre={nombre}
+          apellido={apellido}
+          descripcion={descripcion}
+          onSave={handleSaveProfile}
+          onCancel={handleCancelEdit}
+        />
+      </MainLayout>
     );
   }
 
@@ -145,7 +149,7 @@ const ProfileScreen = () => {
         </View>
 
         <Text style={styles.userName}>{nombre} {apellido}</Text>
-        <Text style={styles.userMatricula}>Matr�cula: {matricula}</Text>
+        <Text style={styles.userMatricula}>Matricula: {matricula}</Text>
         <Text style={styles.userBio}>{descripcion}</Text>
 
         <TouchableOpacity
@@ -192,8 +196,13 @@ const ProfileScreen = () => {
     </View>
   );
 
+  if (!API_BASE_URL) {
+    console.warn('API_BASE_URL no está configurado. Crea un archivo .env con API_BASE_URL=http://<tu_ip>:<puerto>');
+  }
+
   return (
-    <SafeAreaView style={styles.container}>
+    <MainLayout>
+      <SafeAreaView style={styles.container}>
       {loading ? (
         <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
           <ActivityIndicator size="large" color="#092468" />
@@ -231,7 +240,8 @@ const ProfileScreen = () => {
           <Text style={{color:'red', textAlign:'center'}}>{error}</Text>
         </View>
       )}
-    </SafeAreaView>
+      </SafeAreaView>
+    </MainLayout>
   );
 };
 

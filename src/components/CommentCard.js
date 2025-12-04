@@ -1,5 +1,4 @@
-import React from 'react';
-import { View, Text, Image } from 'react-native';
+import { Image, Text, View } from 'react-native';
 import styles from '../styles/CommentCardStyles';
 
 const CommentCard = ({ comment }) => {
@@ -19,7 +18,7 @@ const CommentCard = ({ comment }) => {
         <Text style={styles.time}>{comment.time}</Text>
         <View style={styles.reactionContainer}>
           <Image
-            source={require('../../assets/like.png')}
+            source={require('../../assets/reaction.png')}
             style={styles.reactionIcon}
           />
           <Text style={styles.reactionText}>{comment.reactions || 0}</Text>

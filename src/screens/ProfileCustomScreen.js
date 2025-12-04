@@ -64,7 +64,7 @@ const ProfileCustomScreen = ({ nombre: nombreProp, apellido: apellidoProp, descr
   };
 
   return (
-    <MainLayout>
+    
       <SafeAreaView style={styles.container}>
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
           {/* Título */}
@@ -191,7 +191,6 @@ const ProfileCustomScreen = ({ nombre: nombreProp, apellido: apellidoProp, descr
           <View style={{ height: 30 }} />
         </ScrollView>
       </SafeAreaView>
-    </MainLayout>
   );
 };
 

@@ -1,14 +1,13 @@
-import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import AuthNavigator from "./AuthNavigator";
-import AppNavigator from "./AppNavigator";
 import { useSession } from "../utils/SessionContext";
+import AppNavigator from "./AppNavigator";
 
 export default function IndexNavigation() {
   const { userauth } = useSession();
+  // TODO: Revertir a {userauth ? <AppNavigator /> : <AuthNavigator />} cuando se implemente login
   return (
     <NavigationContainer>
-      {userauth ? <AppNavigator /> : <AuthNavigator />} 
+      <AppNavigator />
     </NavigationContainer>
   );
 }
