@@ -23,6 +23,7 @@ const ProfileScreen = () => {
   const [activeTab, setActiveTab] = useState('Publicaciones');
   const [isEditing, setIsEditing] = useState(false);
   const [nombre, setNombre] = useState('');
+  const [foto, setFoto] = useState('');
   const [apellido, setApellido] = useState('');
   const [matricula, setMatricula] = useState('');
   const [descripcion, setDescripcion] = useState('');
@@ -39,6 +40,7 @@ const ProfileScreen = () => {
     setNombre(data.nombre);
     setApellido(data.apellido);
     setDescripcion(data.descripcion);
+    setFoto(data.foto);
     setIsEditing(false);
   };
 
@@ -78,9 +80,10 @@ const ProfileScreen = () => {
       
       if (currentUser) {
         setNombre(currentUser.nombres || '');
-        setApellido(currentUser.apellids || '');
-        setMatricula(currentUser.matricula || '');
+        setApellido(currentUser.apellidos || '');
+        setMatricula(currentUser.idUsuario || '');
         setDescripcion(currentUser.descripcion || '');
+        setFoto(currentUser.foto || '');
       } else {
         setError('No se pudo obtener la información del usuario');
       }
@@ -143,7 +146,9 @@ const ProfileScreen = () => {
       <View style={styles.profileSection}>
         <View style={styles.avatarContainer}>
           <Image
-            source={require('../../assets/icons/defaultavatar.png')}
+            source={
+              foto ? {uri: foto}
+              : require('../../assets/icons/defaultavatar.png')}
             style={styles.avatar}
           />
         </View>
