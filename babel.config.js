@@ -1,3 +1,4 @@
+// Habilitar variables de entorno en el proyecto
 module.exports = function (api) {
   api.cache(true);
   return {

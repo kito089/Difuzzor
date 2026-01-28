@@ -32,7 +32,8 @@ export const authService = {
   config,
   discovery,
 
-async signIn() {
+  // Inicio de sesion mediante Microsoft
+  async signIn() {
     try {
       console.log('Iniciando login...');
 
@@ -88,6 +89,8 @@ async signIn() {
   },
 
   // ===== MÉTODOS EXISTENTES =====
+
+  // Verificar la autenticacion (1.- Local, 2.- Microsoft)
   async isAuthenticated() {
     console.log(" 1. Iniciando verificación de autenticación");
     try {
@@ -98,7 +101,8 @@ async signIn() {
         console.log(" 2.5. No hay tokens almacenados, Usuario no autenticado");
         return null;
       }
-          // Verificar si el token está cerca de expirar (5 minutos)
+      
+      // Verificar si el token está cerca de expirar (5 minutos)
       console.log(" 3. verificando expiracion de token")
       const isExpired = tokens.expires_at && (tokens.expires_at - Date.now() < 5 * 60 * 1000);
       
@@ -131,6 +135,7 @@ async signIn() {
     }
   },
 
+  // Cierre de sesion por parte de Microsoft
   async signOut() {
     try {
       await clearTokens();
@@ -148,6 +153,7 @@ async signIn() {
     }
   },
 
+  // Obtener la informacion del usuario mediante el Back
   async getCurrentUser() {
     try {
       const tokens = await getStoredTokens();
